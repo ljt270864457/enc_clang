@@ -6,4 +6,6 @@ set(CMAKE_CXX_STANDARD 11)
 # 确保添加了所有需要的源文件
 add_executable(clang main.c
         md5.c
-        md5.h)
+        md5.h
+        sha1.h
+        sha1.c)
