@@ -57,13 +57,10 @@ void call_sha1(const char *content, size_t length) {
 void call_des(const char *content, size_t length) {
     DES_cblock output;
     DES_key_schedule schedule;
-    DES_cblock key;
+    // 初始化秘钥
+    DES_cblock key = "mysecret";
     char label[256]; // 假设最大长度为 256，可按需调整
 
-    // 初始化密钥
-    for (int i = 0; i < 8; ++i) {
-        key[i] = 0x00;
-    }
 
     // 设置密钥
     DES_set_key(&key, &schedule);
@@ -81,11 +78,11 @@ void call_des(const char *content, size_t length) {
 void run_test(const char *test_name, void (*test_func)(const char *, size_t), const char *content) {
     size_t length = strlen(content);
     printf("--- %s Test ---\n", test_name);
-    test_func((char *)content, length);
+    test_func((char *) content, length);
 }
 
 int main() {
-    char content[] = "Gemini";
+    char content[] = "Gemini12";
 
     run_test("MD5", call_md5, content);
     run_test("SHA1", call_sha1, content);
