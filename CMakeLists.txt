@@ -8,4 +8,6 @@ add_executable(clang main.c
         md5.c
         md5.h
         sha1.h
-        sha1.c)
+        sha1.c
+        des.h
+        des.c)
