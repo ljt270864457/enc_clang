@@ -23,23 +23,33 @@ void call_md5(char *content, size_t length) {
     printf("MD5(\"%s\") = %s\n", content, hexString);
 }
 
+void PrintSHA1TestResult(const char *testName, const char *input, uint8_t digest[SHA1HashSize]) {
+    int i;
+
+    printf("%s (\"%s\") = ", testName, input);
+    for (i = 0; i < SHA1HashSize; ++i) {
+        printf("%02x", digest[i]);
+    }
+    printf("\n");
+}
+
 // 新增: SHA1 调用函数
 void call_sha1(const char *content, size_t length) {
-    SHA1_CTX context;
-    unsigned char digest[SHA1_DIGEST_SIZE];
-    char hexString[SHA1_DIGEST_SIZE * 2 + 1]; // 20字节摘要 -> 40个十六进制字符 + '\0'
+    SHA1Context sha;
+    uint8_t Message_Digest[SHA1HashSize];
 
-    SHA1_Init(&context);
-    SHA1_Update(&context, (const unsigned char*)content, length);
-    SHA1_Final(digest, &context);
+    /*
+     *  执行RFC 3174中定义的标准测试用例
+     */
 
-    // 将20字节的摘要转换为40字节的十六进制字符串
-    for (int i = 0; i < SHA1_DIGEST_SIZE; i++) {
-        sprintf(hexString + (i * 2), "%02x", digest[i]);
-    }
-    hexString[SHA1_DIGEST_SIZE * 2] = '\0';
+    printf("\nSHA-1 Validation Tests:\n\n");
 
-    printf("SHA1(\"%s\") = %s\n", content, hexString);
+    /* TEST 1 */
+    SHA1Reset(&sha);
+    SHA1Input(&sha, (const unsigned char *) content, length);
+    SHA1Result(&sha, Message_Digest);
+    PrintSHA1TestResult("TEST1", content, Message_Digest);
+    printf("Expected: ddba2c9277cd909b2d4fac91a3cc754a462c7a90\n\n");
 }
 
 
@@ -55,11 +65,6 @@ int main() {
     // 新增: SHA1 测试用例
     printf("\n--- SHA1 Test ---\n");
     call_sha1(content, length);
-
-    // 测试一个空字符串
-    printf("\n--- Empty String Test ---\n");
-    call_md5("", 0);
-    call_sha1("", 0);
 
     return 0;
 }

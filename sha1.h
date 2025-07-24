@@ -1,22 +1,65 @@
-// sha1.h
-#ifndef SHA1_H
-#define SHA1_H
+/*
+*  sha1.h
+ *
+ *  Description:
+ *      This is the header file for code which implements the Secure
+ *      Hashing Algorithm 1 as defined in FIPS PUB 180-1 published
+ *      April 17, 1995.
+ *
+ *      Many of the variable names in this code, especially the
+ *      single character names, were used because those were the names
+ *      used in the publication.
+ *
+ *      Please read the file sha1.c for more information.
+ *
+ */
 
-#include <stddef.h>
+#ifndef _SHA1_H_
+#define _SHA1_H_
+
 #include <stdint.h>
 
-// SHA-1 上下文结构
-typedef struct {
-    uint32_t state[5];
-    uint32_t count[2];
-    unsigned char buffer[64];
-} SHA1_CTX;
+#ifndef _SHA_enum_
+#define _SHA_enum_
+enum
+{
+    shaSuccess = 0,
+    shaNull,            /* Null pointer parameter */
+    shaInputTooLong,    /* input data too long */
+    shaStateError       /* called Input after Result */
+};
+#endif
 
-#define SHA1_DIGEST_SIZE 20
+#define SHA1HashSize 20
 
-// 函数原型
-void SHA1_Init(SHA1_CTX* context);
-void SHA1_Update(SHA1_CTX* context, const unsigned char* data, const size_t len);
-void SHA1_Final(unsigned char digest[SHA1_DIGEST_SIZE], SHA1_CTX* context);
+/*
+ *  This structure will hold context information for the SHA-1
+ *  hashing operation
+ *  SHA-1上下文结构体，保存哈希运算的所有状态信息
+ */
+typedef struct SHA1Context
+{
+    uint32_t Intermediate_Hash[SHA1HashSize/4]; /* Message Digest  */
 
-#endif /* SHA1_H */
+    uint32_t Length_Low;            /* Message length in bits      */
+    uint32_t Length_High;           /* Message length in bits      */
+
+    /* Index into message block array   */
+    int_least16_t Message_Block_Index;
+    uint8_t Message_Block[64];      /* 512-bit message blocks      */
+
+    int Computed;                   /* Is the digest computed?         */
+    int Corrupted;                  /* Is the message digest corrupted? */
+} SHA1Context;
+
+/*
+ *  Function Prototypes
+ */
+int SHA1Reset(  SHA1Context *);
+int SHA1Input(  SHA1Context *,
+                const uint8_t *,
+                unsigned int);
+int SHA1Result( SHA1Context *,
+                uint8_t Message_Digest[SHA1HashSize]);
+
+#endif
