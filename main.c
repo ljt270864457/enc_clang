@@ -9,6 +9,7 @@
 #include "md5.h"
 #include "sha1.h" // 引入 sha1 头文件
 #include "des.h" // 引入 des 头文件
+#include "aes.h" // 引入 aes 头文件
 
 // MD5 调用函数
 // 修改函数参数类型为 char *
@@ -81,6 +82,75 @@ void run_test(const char *test_name, void (*test_func)(const char *, size_t), co
     test_func((char *) content, length);
 }
 
+// 测试函数
+int call_aes() {
+    // 示例明文
+    unsigned char plaintext[16] = {
+        0x32, 0x43, 0xf6, 0xa8, 0x88, 0x5a, 0x30, 0x8d,
+        0x31, 0x31, 0x98, 0xa2, 0xe0, 0x37, 0x07, 0x34
+    };
+
+    // 示例密钥
+    unsigned char key[16] = {
+        0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6,
+        0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c
+    };
+
+    unsigned char ciphertext[16];
+    unsigned char decrypted[16];
+
+    printf("AES加密算法演示\n");
+    printf("================\n");
+
+    printf("原始明文: ");
+    for (int i = 0; i < 16; i++) {
+        printf("%02x ", plaintext[i]);
+    }
+    printf("\n");
+
+    printf("加密密钥: ");
+    for (int i = 0; i < 16; i++) {
+        printf("%02x ", key[i]);
+    }
+    printf("\n\n");
+
+    // 执行加密
+    aes_encrypt(plaintext, key, ciphertext);
+
+    printf("加密结果: ");
+    for (int i = 0; i < 16; i++) {
+        printf("%02x ", ciphertext[i]);
+    }
+    printf("\n\n");
+
+    // 执行解密
+    aes_decrypt(ciphertext, key, decrypted);
+
+    printf("解密结果: ");
+    for (int i = 0; i < 16; i++) {
+        printf("%02x ", decrypted[i]);
+    }
+    printf("\n\n");
+
+    // 验证解密是否正确
+    int success = 1;
+    for (int i = 0; i < 16; i++) {
+        if (plaintext[i] != decrypted[i]) {
+            success = 0;
+            break;
+        }
+    }
+
+    if (success) {
+        printf("验证成功: 解密结果与原始明文一致\n");
+    } else {
+        printf("验证失败: 解密结果与原始明文不一致\n");
+    }
+
+    return 0;
+}
+
+
 int main() {
     char content[] = "Gemini12";
 
@@ -91,6 +161,8 @@ int main() {
 
     printf("\n--- DES Test ---\n");
     call_des(content, strlen(content));
+    printf("\n--- AES Test ---\n");
+    call_aes();
 
     return 0;
 }

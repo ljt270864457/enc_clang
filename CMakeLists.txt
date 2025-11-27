@@ -10,4 +10,6 @@ add_executable(clang main.c
         sha1.h
         sha1.c
         des.h
-        des.c)
+        des.c
+        aes.c
+        aes.h)
